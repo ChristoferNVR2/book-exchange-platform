@@ -1,0 +1,4 @@
+.env
+uploads/covers/*
+!uploads/covers/.gitkeep
+como_se_hizo.pdf
