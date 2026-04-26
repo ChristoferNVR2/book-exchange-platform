@@ -1,0 +1,213 @@
+:root {
+    --be-primary:      #1e5631;
+    --be-primary-dark: #163d23;
+    --be-gold:         #c8a96e;
+    --be-cream:        #fdf8f0;
+    --be-sidebar-bg:   #f4f1eb;
+    --be-sidebar-border: #ddd0bc;
+    --be-footer-bg:    #1a1a1a;
+    --be-footer-text:  #aaaaaa;
+}
+
+/* ── Base ───────────────────────────────────────────── */
+body {
+    background-color: var(--be-cream);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* ── Navbar ─────────────────────────────────────────── */
+.be-navbar {
+    background-color: var(--be-primary);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.be-navbar .navbar-brand {
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.be-navbar .form-control,
+.be-navbar .form-select {
+    background-color: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #fff;
+}
+
+.be-navbar .form-control::placeholder { color: rgba(255,255,255,0.6); }
+.be-navbar .form-control:focus,
+.be-navbar .form-select:focus {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: var(--be-gold);
+    color: #fff;
+    box-shadow: 0 0 0 0.2rem rgba(200, 169, 110, 0.35);
+}
+
+.be-navbar .form-select option { color: #222; background: #fff; }
+
+/* ── Wrapper ────────────────────────────────────────── */
+.be-wrapper {
+    display: flex;
+    flex-grow: 1;
+}
+
+/* ── Sidebar ────────────────────────────────────────── */
+.be-sidebar {
+    width: 230px;
+    min-width: 230px;
+    background-color: var(--be-sidebar-bg);
+    border-right: 1px solid var(--be-sidebar-border);
+    padding: 1.25rem 0.75rem;
+}
+
+.sidebar-heading {
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    padding: 0 0.5rem;
+    margin-bottom: 0.35rem;
+    color: #888 !important;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: #444;
+    padding: 0.35rem 0.6rem;
+    border-radius: 0.375rem;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+}
+
+.sidebar-link:hover {
+    background-color: var(--be-primary);
+    color: #fff;
+}
+
+.sidebar-link.active {
+    background-color: var(--be-primary);
+    color: #fff;
+    font-weight: 500;
+}
+
+.be-badge {
+    background-color: var(--be-gold);
+    color: #fff;
+    font-size: 0.7rem;
+}
+
+/* ── Main content ───────────────────────────────────── */
+.be-main {
+    flex-grow: 1;
+    padding: 2rem 2.5rem;
+    overflow-x: hidden;
+}
+
+.page-header {
+    border-bottom: 2px solid var(--be-gold);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.75rem;
+}
+
+/* ── Book cards ─────────────────────────────────────── */
+.book-card {
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    transition: transform 0.2s, box-shadow 0.2s;
+    height: 100%;
+}
+
+.book-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.13);
+}
+
+.book-cover {
+    height: 190px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.5rem;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.cover-1 { background-color: #1e5631; }
+.cover-2 { background-color: #2e4057; }
+.cover-3 { background-color: #7b2d8b; }
+.cover-4 { background-color: #b5451b; }
+.cover-5 { background-color: #1a5276; }
+.cover-6 { background-color: #784212; }
+
+/* ── Buttons ────────────────────────────────────────── */
+.btn-be {
+    background-color: var(--be-primary);
+    border-color: var(--be-primary);
+    color: #fff;
+}
+
+.btn-be:hover {
+    background-color: var(--be-primary-dark);
+    border-color: var(--be-primary-dark);
+    color: #fff;
+}
+
+.btn-be-outline {
+    border-color: var(--be-primary);
+    color: var(--be-primary);
+}
+
+.btn-be-outline:hover {
+    background-color: var(--be-primary);
+    color: #fff;
+}
+
+/* ── Auth forms ─────────────────────────────────────── */
+.auth-card {
+    max-width: 440px;
+    margin: 3rem auto;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border: none;
+}
+
+.auth-card .card-header {
+    background-color: var(--be-primary);
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 1rem 1.5rem;
+}
+
+/* ── Footer ─────────────────────────────────────────── */
+.be-footer {
+    background-color: var(--be-footer-bg);
+    color: var(--be-footer-text);
+    font-size: 0.875rem;
+    padding: 1.25rem 0;
+    text-align: center;
+}
+
+.footer-link {
+    color: var(--be-gold);
+    text-decoration: none;
+}
+
+.footer-link:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+/* ── Responsive ─────────────────────────────────────── */
+@media (max-width: 767px) {
+    .be-sidebar {
+        width: 100%;
+        min-width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--be-sidebar-border);
+    }
+
+    .be-wrapper { flex-direction: column; }
+    .be-main { padding: 1.25rem 1rem; }
+}
