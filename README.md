@@ -37,9 +37,22 @@ cd book-exchange-platform
 cp .env.example .env
 ```
 
-The defaults work for local development. Edit credentials if needed.
+Open `.env` and fill in:
 
-### 3. Start the stack
+```
+DB_PASSWORD=          # any password you like for the local MariaDB container
+ADMIN_SEED_PASSWORD=  # password for the dev admin account (e.g. admin123)
+```
+
+> Each teammate sets their own values — `.env` is never committed to git.
+
+### 3. Install dependencies
+
+```bash
+docker run --rm -v "$(pwd)":/app -w /app composer:latest install --no-interaction
+```
+
+### 4. Start the stack
 
 ```bash
 ./vendor/bin/sail up --build
@@ -52,18 +65,30 @@ On first run, Sail builds the app image and MariaDB initialises automatically.
 | Application | http://localhost |
 | phpMyAdmin | http://localhost:8080 |
 
-### 4. Run migrations and seed
+### 5. Generate application key
+
+```bash
+./vendor/bin/sail artisan key:generate
+```
+
+### 6. Run migrations and seed
 
 ```bash
 ./vendor/bin/sail artisan migrate --seed
 ```
 
-### 5. Seed accounts
+This creates all tables and inserts the initial categories, an admin account,
+and a sample user. Each teammate runs this once on their own machine —
+**no shared database required**.
+
+### 7. Seed accounts
 
 | Role | Username | Email | Password |
 |---|---|---|---|
-| Admin | `admin` | admin@bookexchange.local | `admin123` |
+| Admin | `admin` | admin@bookexchange.local | *(your `ADMIN_SEED_PASSWORD`)* |
 | User | `alice` | alice@example.com | `user123` |
+
+Regular users can register themselves via `/register`.
 
 ## Project structure
 
