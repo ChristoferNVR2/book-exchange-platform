@@ -200,6 +200,24 @@ book-exchange-platform/
 ./vendor/bin/sail artisan test
 ```
 
+## Accessing from another device (phone, tablet)
+
+`localhost` only resolves on your own machine. To test on another device, expose the local server with [ngrok](https://ngrok.com) using a persistent static domain:
+
+```bash
+ngrok http --domain=your-subdomain.ngrok-free.app 80
+```
+
+Set `APP_URL` in `.env` to your static domain — do this once, it never changes:
+
+```
+APP_URL=https://your-subdomain.ngrok-free.app
+```
+
+Then follow the normal getting started steps. No extra restart is needed.
+
+> The ngrok domain must match `APP_URL` exactly — otherwise Laravel generates broken asset URLs and the page loads without styles.
+
 ## Resetting the stack completely
 
 To wipe all containers and volumes:

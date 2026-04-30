@@ -18,10 +18,24 @@
             <i class="bi bi-book-half me-1"></i>BookXchange
         </a>
 
-        <button class="navbar-toggler" type="button"
-                data-bs-toggle="collapse" data-bs-target="#navMain">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        <div class="d-flex align-items-center gap-1">
+            {{-- Mobile: opens sidebar offcanvas --}}
+            <button class="btn btn-outline-light btn-sm d-lg-none"
+                    data-bs-toggle="offcanvas" data-bs-target="#sidebar"
+                    aria-label="Toggle sidebar">
+                <i class="bi bi-layout-sidebar"></i>
+            </button>
+            {{-- Desktop: collapses sidebar inline --}}
+            <button class="btn btn-outline-light btn-sm d-none d-lg-flex"
+                    id="sidebarToggle" aria-label="Toggle sidebar">
+                <i class="bi bi-layout-sidebar"></i>
+            </button>
+            {{-- Navbar collapse (hamburger) --}}
+            <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#navMain">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
 
         <div class="collapse navbar-collapse" id="navMain">
             {{-- Search --}}
@@ -82,58 +96,71 @@
 {{-- ── Body wrapper ─────────────────────────────────────────── --}}
 <div class="be-wrapper">
 
-    {{-- Sidebar --}}
-    <aside class="be-sidebar">
+    {{-- Sidebar — offcanvas on mobile, inline on desktop --}}
+    <aside class="offcanvas-lg offcanvas-start be-sidebar" id="sidebar"
+           tabindex="-1" aria-labelledby="sidebarLabel">
 
-        <p class="sidebar-heading text-uppercase mt-1">
-            <i class="bi bi-compass"></i> Browse
-        </p>
-        <a class="sidebar-link {{ request()->routeIs('catalog.index') ? 'active' : '' }}"
-           href="{{ route('catalog.index') }}">
-            <i class="bi bi-grid-3x3-gap"></i> All Books
-        </a>
+        {{-- Offcanvas header (mobile only) --}}
+        <div class="offcanvas-header d-lg-none border-bottom pb-2">
+            <span class="fw-semibold" id="sidebarLabel">
+                <i class="bi bi-book-half me-1"></i>BookXchange
+            </span>
+            <button type="button" class="btn-close"
+                    data-bs-dismiss="offcanvas" data-bs-target="#sidebar"></button>
+        </div>
 
-        <p class="sidebar-heading text-uppercase mt-3">
-            <i class="bi bi-tags"></i> Categories
-        </p>
-        @foreach($navCategories ?? [] as $cat)
-            <a class="sidebar-link {{ request('category') === $cat->slug ? 'active' : '' }}"
-               href="{{ route('catalog.index', ['category' => $cat->slug]) }}">
-                <i class="bi bi-journal-bookmark"></i> {{ $cat->name }}
-            </a>
-        @endforeach
+        <div class="offcanvas-body flex-column p-0 d-flex">
 
-        @auth
-            <p class="sidebar-heading text-uppercase mt-3">
-                <i class="bi bi-person"></i> My Account
+            <p class="sidebar-heading text-uppercase mt-1">
+                <i class="bi bi-compass"></i> Browse
             </p>
-            <a class="sidebar-link {{ request()->routeIs('profile.index') ? 'active' : '' }}"
-               href="{{ route('profile.index') }}">
-                <i class="bi bi-collection"></i> My Books
-            </a>
-            <a class="sidebar-link" href="{{ route('profile.index') }}#inbox">
-                <i class="bi bi-inbox"></i> Inbox
-            </a>
-            <a class="sidebar-link {{ request()->routeIs('books.create') ? 'active' : '' }}"
-               href="{{ route('books.create') }}">
-                <i class="bi bi-plus-circle"></i> Publish a Book
+            <a class="sidebar-link {{ request()->routeIs('catalog.index') ? 'active' : '' }}"
+               href="{{ route('catalog.index') }}">
+                <i class="bi bi-grid-3x3-gap"></i> All Books
             </a>
 
-            @if(auth()->user()->isAdmin())
+            <p class="sidebar-heading text-uppercase mt-3">
+                <i class="bi bi-tags"></i> Categories
+            </p>
+            @foreach($navCategories ?? [] as $cat)
+                <a class="sidebar-link {{ request('category') === $cat->slug ? 'active' : '' }}"
+                   href="{{ route('catalog.index', ['category' => $cat->slug]) }}">
+                    <i class="bi bi-journal-bookmark"></i> {{ $cat->name }}
+                </a>
+            @endforeach
+
+            @auth
                 <p class="sidebar-heading text-uppercase mt-3">
-                    <i class="bi bi-shield-check"></i> Admin
+                    <i class="bi bi-person"></i> My Account
                 </p>
-                <a class="sidebar-link {{ request()->routeIs('admin.categories') ? 'active' : '' }}"
-                   href="{{ route('admin.categories') }}">
-                    <i class="bi bi-folder2-open"></i> Categories
+                <a class="sidebar-link {{ request()->routeIs('profile.index') ? 'active' : '' }}"
+                   href="{{ route('profile.index') }}">
+                    <i class="bi bi-collection"></i> My Books
                 </a>
-                <a class="sidebar-link {{ request()->routeIs('admin.disputes') ? 'active' : '' }}"
-                   href="{{ route('admin.disputes') }}">
-                    <i class="bi bi-flag"></i> Disputes
+                <a class="sidebar-link" href="{{ route('profile.index') }}#inbox">
+                    <i class="bi bi-inbox"></i> Inbox
                 </a>
-            @endif
-        @endauth
+                <a class="sidebar-link {{ request()->routeIs('books.create') ? 'active' : '' }}"
+                   href="{{ route('books.create') }}">
+                    <i class="bi bi-plus-circle"></i> Publish a Book
+                </a>
 
+                @if(auth()->user()->isAdmin())
+                    <p class="sidebar-heading text-uppercase mt-3">
+                        <i class="bi bi-shield-check"></i> Admin
+                    </p>
+                    <a class="sidebar-link {{ request()->routeIs('admin.categories') ? 'active' : '' }}"
+                       href="{{ route('admin.categories') }}">
+                        <i class="bi bi-folder2-open"></i> Categories
+                    </a>
+                    <a class="sidebar-link {{ request()->routeIs('admin.disputes') ? 'active' : '' }}"
+                       href="{{ route('admin.disputes') }}">
+                        <i class="bi bi-flag"></i> Disputes
+                    </a>
+                @endif
+            @endauth
+
+        </div>
     </aside>
 
     {{-- Main content --}}
@@ -171,6 +198,22 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+(function () {
+    const sidebar = document.getElementById('sidebar');
+    const toggle  = document.getElementById('sidebarToggle');
+    const LG      = 992;
+
+    if (localStorage.getItem('sidebarCollapsed') === 'true') {
+        sidebar.classList.add('be-collapsed');
+    }
+
+    toggle.addEventListener('click', function () {
+        sidebar.classList.toggle('be-collapsed');
+        localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('be-collapsed'));
+    });
+})();
+</script>
 @stack('scripts')
 </body>
 </html>

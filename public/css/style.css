@@ -54,12 +54,41 @@ body {
 }
 
 /* ── Sidebar ────────────────────────────────────────── */
+
+/* Base: only colours — let Bootstrap handle positioning on mobile */
 .be-sidebar {
-    width: 230px;
-    min-width: 230px;
     background-color: var(--be-sidebar-bg);
-    border-right: 1px solid var(--be-sidebar-border);
-    padding: 1.25rem 0.75rem;
+}
+
+/* Desktop (lg+): fixed-width inline sidebar */
+@media (min-width: 992px) {
+    .be-sidebar {
+        width: 230px;
+        min-width: 230px;
+        border-right: 1px solid var(--be-sidebar-border);
+        padding: 1.25rem 0.75rem;
+        overflow: hidden;
+        transition: width 0.25s ease, min-width 0.25s ease,
+                    padding 0.25s ease, border 0.25s ease;
+    }
+
+    .be-sidebar.be-collapsed {
+        width: 0;
+        min-width: 0;
+        padding: 0;
+        border-right: none;
+    }
+}
+
+/* Mobile (< lg): offcanvas drawer — Bootstrap handles show/hide/positioning */
+@media (max-width: 991.98px) {
+    .be-sidebar .offcanvas-body {
+        padding: 1rem 0.75rem;
+    }
+
+    .be-main {
+        width: 100%;
+    }
 }
 
 .sidebar-heading {
@@ -200,14 +229,6 @@ body {
 }
 
 /* ── Responsive ─────────────────────────────────────── */
-@media (max-width: 767px) {
-    .be-sidebar {
-        width: 100%;
-        min-width: 100%;
-        border-right: none;
-        border-bottom: 1px solid var(--be-sidebar-border);
-    }
-
-    .be-wrapper { flex-direction: column; }
+@media (max-width: 991.98px) {
     .be-main { padding: 1.25rem 1rem; }
 }
