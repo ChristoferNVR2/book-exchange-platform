@@ -1,13 +1,14 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CatalogController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
-Route::get('/',           fn() => view('catalog.index'))->name('catalog.index');
-Route::get('/contact',    fn() => view('contact'))->name('contact');
-// books/{id} must come after /books/create to avoid swallowing it as a parameter
-Route::get('/books/{id}', fn() => view('books.show'))->name('books.show');
+Route::get('/',              [CatalogController::class, 'index'])->name('catalog.index');
+Route::get('/contact',       fn() => view('contact'))->name('contact');
+// {book} uses route model binding — must come after /books/create
+Route::get('/books/{book}',  [CatalogController::class, 'show'])->name('books.show');
 
 // Guest-only routes (redirect home if already logged in)
 Route::middleware('guest')->group(function () {
