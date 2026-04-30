@@ -17,6 +17,69 @@ A circular-economy web platform for exchanging second-hand books between users, 
 | CSS Framework | Bootstrap 5 |
 | Local dev | Laravel Sail (Docker) |
 
+## Architecture
+
+### Local development
+
+```
+Browser
+   │  HTTP
+   ▼
+┌──────────────────────────────────────────┐
+│  Docker Compose (Laravel Sail)           │
+│                                          │
+│  ┌─────────────────────┐                 │
+│  │  app  :80           │                 │
+│  │  PHP 8.5 + Apache   │                 │
+│  │  Laravel 11         │◄── your code    │
+│  └────────┬────────────┘    (bind mount) │
+│           │                              │
+│  ┌────────▼────────────┐                 │
+│  │  mariadb  :3306     │                 │
+│  │  MariaDB 11         │◄── sail-mariadb │
+│  └─────────────────────┘    (volume)     │
+│                                          │
+│  ┌─────────────────────┐                 │
+│  │  phpmyadmin  :8080  │                 │
+│  └─────────────────────┘                 │
+└──────────────────────────────────────────┘
+```
+
+### Application layers
+
+```
+Request
+   │
+   ▼
+routes/web.php          ← decides which controller handles the request
+   │
+   ▼
+Middleware              ← auth check, admin check, guest guard
+   │
+   ▼
+Controller              ← validates input, calls models, returns response
+   │
+   ▼
+Eloquent Model          ← reads/writes MariaDB via PDO
+   │
+   ▼
+Blade View              ← renders HTML with Bootstrap 5
+```
+
+### Data storage
+
+| Data | Where |
+|---|---|
+| Users, books, categories, exchanges, disputes | MariaDB (`sail-mariadb` Docker volume) |
+| Sessions and cache | MariaDB (`sessions` / `cache` tables) |
+| Book cover images | `storage/app/public/covers/` |
+| App config and secrets | `.env` (local only, never in git) |
+
+### Future deployment (AWS)
+
+The same `compose.yaml` can be deployed to an EC2 instance with no code changes —
+only the `.env` values differ between local and production.
+
 ## Requirements
 
 - [Docker](https://docs.docker.com/get-docker/)
