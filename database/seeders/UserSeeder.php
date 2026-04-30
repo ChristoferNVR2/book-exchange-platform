@@ -13,7 +13,7 @@ class UserSeeder extends Seeder
             ['email' => 'admin@bookexchange.local'],
             [
                 'username' => 'admin',
-                'password' => bcrypt('admin123'),
+                'password' => bcrypt(env('ADMIN_SEED_PASSWORD', 'admin123')),
                 'role'     => 'admin',
             ]
         );

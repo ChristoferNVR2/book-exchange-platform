@@ -9,19 +9,34 @@
         <i class="bi bi-box-arrow-in-right me-2"></i>Log In
     </div>
     <div class="card-body p-4">
-        <form method="POST" action="#">
+        <form method="POST" action="{{ route('login') }}">
             @csrf
 
             <div class="mb-3">
-                <label class="form-label fw-semibold" for="email">Email address <span class="text-danger">*</span></label>
-                <input class="form-control" id="email" name="email" type="email"
-                       placeholder="you@example.com" required autocomplete="email">
+                <label class="form-label fw-semibold" for="email">
+                    Email address <span class="text-danger">*</span>
+                </label>
+                <input class="form-control @error('email') is-invalid @enderror"
+                       id="email" name="email" type="email"
+                       placeholder="you@example.com"
+                       value="{{ old('email') }}"
+                       required autocomplete="email">
+                @error('email')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
 
             <div class="mb-3">
-                <label class="form-label fw-semibold" for="password">Password <span class="text-danger">*</span></label>
-                <input class="form-control" id="password" name="password" type="password"
-                       placeholder="••••••••" required autocomplete="current-password">
+                <label class="form-label fw-semibold" for="password">
+                    Password <span class="text-danger">*</span>
+                </label>
+                <input class="form-control @error('password') is-invalid @enderror"
+                       id="password" name="password" type="password"
+                       placeholder="••••••••"
+                       required autocomplete="current-password">
+                @error('password')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
 
             <div class="mb-4 form-check">

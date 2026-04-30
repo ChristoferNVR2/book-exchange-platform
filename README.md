@@ -17,6 +17,69 @@ A circular-economy web platform for exchanging second-hand books between users, 
 | CSS Framework | Bootstrap 5 |
 | Local dev | Laravel Sail (Docker) |
 
+## Architecture
+
+### Local development
+
+```
+Browser
+   │  HTTP
+   ▼
+┌──────────────────────────────────────────┐
+│  Docker Compose (Laravel Sail)           │
+│                                          │
+│  ┌─────────────────────┐                 │
+│  │  app  :80           │                 │
+│  │  PHP 8.5 + Apache   │                 │
+│  │  Laravel 11         │◄── your code    │
+│  └────────┬────────────┘    (bind mount) │
+│           │                              │
+│  ┌────────▼────────────┐                 │
+│  │  mariadb  :3306     │                 │
+│  │  MariaDB 11         │◄── sail-mariadb │
+│  └─────────────────────┘    (volume)     │
+│                                          │
+│  ┌─────────────────────┐                 │
+│  │  phpmyadmin  :8080  │                 │
+│  └─────────────────────┘                 │
+└──────────────────────────────────────────┘
+```
+
+### Application layers
+
+```
+Request
+   │
+   ▼
+routes/web.php          ← decides which controller handles the request
+   │
+   ▼
+Middleware              ← auth check, admin check, guest guard
+   │
+   ▼
+Controller              ← validates input, calls models, returns response
+   │
+   ▼
+Eloquent Model          ← reads/writes MariaDB via PDO
+   │
+   ▼
+Blade View              ← renders HTML with Bootstrap 5
+```
+
+### Data storage
+
+| Data | Where |
+|---|---|
+| Users, books, categories, exchanges, disputes | MariaDB (`sail-mariadb` Docker volume) |
+| Sessions and cache | MariaDB (`sessions` / `cache` tables) |
+| Book cover images | `storage/app/public/covers/` |
+| App config and secrets | `.env` (local only, never in git) |
+
+### Future deployment (AWS)
+
+The same `compose.yaml` can be deployed to an EC2 instance with no code changes —
+only the `.env` values differ between local and production.
+
 ## Requirements
 
 - [Docker](https://docs.docker.com/get-docker/)
@@ -37,9 +100,22 @@ cd book-exchange-platform
 cp .env.example .env
 ```
 
-The defaults work for local development. Edit credentials if needed.
+Open `.env` and fill in:
 
-### 3. Start the stack
+```
+DB_PASSWORD=          # any password you like for the local MariaDB container
+ADMIN_SEED_PASSWORD=  # password for the dev admin account (e.g. admin123)
+```
+
+> Each teammate sets their own values — `.env` is never committed to git.
+
+### 3. Install dependencies
+
+```bash
+docker run --rm -v "$(pwd)":/app -w /app composer:latest install --no-interaction
+```
+
+### 4. Start the stack
 
 ```bash
 ./vendor/bin/sail up --build
@@ -52,18 +128,30 @@ On first run, Sail builds the app image and MariaDB initialises automatically.
 | Application | http://localhost |
 | phpMyAdmin | http://localhost:8080 |
 
-### 4. Run migrations and seed
+### 5. Generate application key
+
+```bash
+./vendor/bin/sail artisan key:generate
+```
+
+### 6. Run migrations and seed
 
 ```bash
 ./vendor/bin/sail artisan migrate --seed
 ```
 
-### 5. Seed accounts
+This creates all tables and inserts the initial categories, an admin account,
+and a sample user. Each teammate runs this once on their own machine —
+**no shared database required**.
+
+### 7. Seed accounts
 
 | Role | Username | Email | Password |
 |---|---|---|---|
-| Admin | `admin` | admin@bookexchange.local | `admin123` |
+| Admin | `admin` | admin@bookexchange.local | *(your `ADMIN_SEED_PASSWORD`)* |
 | User | `alice` | alice@example.com | `user123` |
+
+Regular users can register themselves via `/register`.
 
 ## Project structure
 

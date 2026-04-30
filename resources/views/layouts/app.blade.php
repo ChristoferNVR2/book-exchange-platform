@@ -48,36 +48,34 @@
 
             {{-- User area (right) --}}
             <ul class="navbar-nav ms-auto align-items-center gap-1">
-                {{-- ▼ shown when GUEST (replace with @guest in dynamic phase) --}}
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('login') }}">
-                        <i class="bi bi-box-arrow-in-right"></i> Log in
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('register') }}">
-                        <i class="bi bi-person-plus"></i> Register
-                    </a>
-                </li>
-
-                {{-- ▼ shown when LOGGED IN (replace with @auth in dynamic phase) --}}
-                {{--
-                <li class="nav-item">
-                    <span class="navbar-text">
-                        <i class="bi bi-person-circle me-1"></i>
-                        <strong>alice</strong>
-                        <span class="badge bg-secondary ms-1">user</span>
-                    </span>
-                </li>
-                <li class="nav-item">
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="btn btn-sm btn-outline-light ms-2">
-                            <i class="bi bi-box-arrow-right"></i> Log out
-                        </button>
-                    </form>
-                </li>
-                --}}
+                @guest
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('login') }}">
+                            <i class="bi bi-box-arrow-in-right"></i> Log in
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('register') }}">
+                            <i class="bi bi-person-plus"></i> Register
+                        </a>
+                    </li>
+                @else
+                    <li class="nav-item">
+                        <span class="navbar-text">
+                            <i class="bi bi-person-circle me-1"></i>
+                            <strong>{{ auth()->user()->username }}</strong>
+                            <span class="badge bg-secondary ms-1">{{ auth()->user()->role }}</span>
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="btn btn-sm btn-outline-light ms-2">
+                                <i class="bi bi-box-arrow-right"></i> Log out
+                            </button>
+                        </form>
+                    </li>
+                @endguest
             </ul>
         </div>
     </div>
@@ -116,40 +114,54 @@
             </a>
         @endforeach
 
-        {{-- ▼ visible when LOGGED IN (add @auth wrapper in dynamic phase) --}}
-        <p class="sidebar-heading text-uppercase mt-3">
-            <i class="bi bi-person"></i> My Account
-        </p>
-        <a class="sidebar-link {{ request()->routeIs('profile.index') ? 'active' : '' }}"
-           href="{{ route('profile.index') }}">
-            <i class="bi bi-collection"></i> My Books
-        </a>
-        <a class="sidebar-link" href="{{ route('profile.index') }}#inbox">
-            <i class="bi bi-inbox"></i> Inbox
-            <span class="badge be-badge ms-auto">2</span>
-        </a>
-        <a class="sidebar-link {{ request()->routeIs('books.create') ? 'active' : '' }}"
-           href="{{ route('books.create') }}">
-            <i class="bi bi-plus-circle"></i> Publish a Book
-        </a>
+        @auth
+            <p class="sidebar-heading text-uppercase mt-3">
+                <i class="bi bi-person"></i> My Account
+            </p>
+            <a class="sidebar-link {{ request()->routeIs('profile.index') ? 'active' : '' }}"
+               href="{{ route('profile.index') }}">
+                <i class="bi bi-collection"></i> My Books
+            </a>
+            <a class="sidebar-link" href="{{ route('profile.index') }}#inbox">
+                <i class="bi bi-inbox"></i> Inbox
+            </a>
+            <a class="sidebar-link {{ request()->routeIs('books.create') ? 'active' : '' }}"
+               href="{{ route('books.create') }}">
+                <i class="bi bi-plus-circle"></i> Publish a Book
+            </a>
 
-        {{-- ▼ visible when ADMIN (add @if(auth()->user()->isAdmin()) in dynamic phase) --}}
-        <p class="sidebar-heading text-uppercase mt-3">
-            <i class="bi bi-shield-check"></i> Admin
-        </p>
-        <a class="sidebar-link {{ request()->routeIs('admin.categories') ? 'active' : '' }}"
-           href="{{ route('admin.categories') }}">
-            <i class="bi bi-folder2-open"></i> Categories
-        </a>
-        <a class="sidebar-link {{ request()->routeIs('admin.disputes') ? 'active' : '' }}"
-           href="{{ route('admin.disputes') }}">
-            <i class="bi bi-flag"></i> Disputes
-        </a>
+            @if(auth()->user()->isAdmin())
+                <p class="sidebar-heading text-uppercase mt-3">
+                    <i class="bi bi-shield-check"></i> Admin
+                </p>
+                <a class="sidebar-link {{ request()->routeIs('admin.categories') ? 'active' : '' }}"
+                   href="{{ route('admin.categories') }}">
+                    <i class="bi bi-folder2-open"></i> Categories
+                </a>
+                <a class="sidebar-link {{ request()->routeIs('admin.disputes') ? 'active' : '' }}"
+                   href="{{ route('admin.disputes') }}">
+                    <i class="bi bi-flag"></i> Disputes
+                </a>
+            @endif
+        @endauth
 
     </aside>
 
     {{-- Main content --}}
     <main class="be-main">
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                <i class="bi bi-check-circle me-1"></i>{{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                <i class="bi bi-exclamation-circle me-1"></i>{{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
         @yield('content')
     </main>
 
