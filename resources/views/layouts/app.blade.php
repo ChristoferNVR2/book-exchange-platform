@@ -32,14 +32,12 @@
                        value="{{ request('q') }}">
                 <select class="form-select me-1" name="category" style="max-width:140px;">
                     <option value="">All categories</option>
-                    <option value="fiction">Fiction</option>
-                    <option value="non-fiction">Non-Fiction</option>
-                    <option value="science-fiction">Sci-Fi</option>
-                    <option value="fantasy">Fantasy</option>
-                    <option value="mystery">Mystery</option>
-                    <option value="romance">Romance</option>
-                    <option value="children">Children</option>
-                    <option value="academic">Academic</option>
+                    @foreach($navCategories ?? [] as $cat)
+                        <option value="{{ $cat->slug }}"
+                            {{ request('category') === $cat->slug ? 'selected' : '' }}>
+                            {{ $cat->name }}
+                        </option>
+                    @endforeach
                 </select>
                 <button class="btn btn-outline-light" type="submit">
                     <i class="bi bi-search"></i>
@@ -98,19 +96,10 @@
         <p class="sidebar-heading text-uppercase mt-3">
             <i class="bi bi-tags"></i> Categories
         </p>
-        @foreach([
-            'fiction'        => ['Fiction',       'journal-bookmark'],
-            'non-fiction'    => ['Non-Fiction',    'journal-text'],
-            'science-fiction'=> ['Sci-Fi',         'stars'],
-            'fantasy'        => ['Fantasy',        'magic'],
-            'mystery'        => ['Mystery',        'eye'],
-            'romance'        => ['Romance',        'heart'],
-            'children'       => ['Children',       'balloon'],
-            'academic'       => ['Academic',       'mortarboard'],
-        ] as $slug => [$label, $icon])
-            <a class="sidebar-link {{ request('category') === $slug ? 'active' : '' }}"
-               href="{{ route('catalog.index', ['category' => $slug]) }}">
-                <i class="bi bi-{{ $icon }}"></i> {{ $label }}
+        @foreach($navCategories ?? [] as $cat)
+            <a class="sidebar-link {{ request('category') === $cat->slug ? 'active' : '' }}"
+               href="{{ route('catalog.index', ['category' => $cat->slug]) }}">
+                <i class="bi bi-journal-bookmark"></i> {{ $cat->name }}
             </a>
         @endforeach
 
