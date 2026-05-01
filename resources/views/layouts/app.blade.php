@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Catalog') — BookXchange</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
@@ -12,84 +15,56 @@
 <body>
 
 {{-- ── Navbar ──────────────────────────────────────────────── --}}
-<nav class="navbar navbar-expand-md navbar-dark be-navbar">
+<nav class="navbar navbar-dark be-navbar">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{{ route('catalog.index') }}">
-            <i class="bi bi-book-half me-1"></i>BookXchange
-        </a>
 
-        <div class="d-flex align-items-center gap-1">
-            {{-- Mobile: opens sidebar offcanvas --}}
+        {{-- Left: one burger + brand --}}
+        <div class="be-nav-left">
+            {{-- Mobile only: opens sidebar offcanvas --}}
             <button class="btn btn-outline-light btn-sm d-lg-none"
                     data-bs-toggle="offcanvas" data-bs-target="#sidebar"
-                    aria-label="Toggle sidebar">
-                <i class="bi bi-layout-sidebar"></i>
+                    aria-label="Open menu">
+                <i class="bi bi-list" style="font-size:1.15rem;"></i>
             </button>
-            {{-- Desktop: collapses sidebar inline --}}
-            <button class="btn btn-outline-light btn-sm d-none d-lg-flex"
-                    id="sidebarToggle" aria-label="Toggle sidebar">
-                <i class="bi bi-layout-sidebar"></i>
-            </button>
-            {{-- Navbar collapse (hamburger) --}}
-            <button class="navbar-toggler" type="button"
-                    data-bs-toggle="collapse" data-bs-target="#navMain">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <a class="navbar-brand" href="{{ route('catalog.index') }}">
+                <i class="bi bi-book-half me-1"></i><span class="be-brand-text">BookXchange</span>
+            </a>
         </div>
 
-        <div class="collapse navbar-collapse" id="navMain">
-            {{-- Search --}}
-            <form class="d-flex mx-auto my-2 my-md-0" style="max-width:480px; width:100%;"
-                  method="GET" action="{{ route('catalog.index') }}">
-                <input class="form-control me-1" type="search" name="q"
-                       placeholder="Search by title or author…"
-                       value="{{ request('q') }}">
-                <select class="form-select me-1" name="category" style="max-width:140px;">
-                    <option value="">All categories</option>
-                    @foreach($navCategories ?? [] as $cat)
-                        <option value="{{ $cat->slug }}"
-                            {{ request('category') === $cat->slug ? 'selected' : '' }}>
-                            {{ $cat->name }}
-                        </option>
-                    @endforeach
-                </select>
-                <button class="btn btn-outline-light" type="submit">
-                    <i class="bi bi-search"></i>
-                </button>
-            </form>
+        {{-- Search — single row on all screen sizes --}}
+        <form class="be-nav-search" method="GET" action="{{ route('catalog.index') }}">
+            <input class="form-control" type="search" name="q"
+                   placeholder="Search books…"
+                   value="{{ request('q') }}">
+            <button class="btn btn-outline-light flex-shrink-0" type="submit">
+                <i class="bi bi-search"></i>
+            </button>
+        </form>
 
-            {{-- User area (right) --}}
-            <ul class="navbar-nav ms-auto align-items-center gap-1">
-                @guest
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('login') }}">
-                            <i class="bi bi-box-arrow-in-right"></i> Log in
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('register') }}">
-                            <i class="bi bi-person-plus"></i> Register
-                        </a>
-                    </li>
-                @else
-                    <li class="nav-item">
-                        <span class="navbar-text">
-                            <i class="bi bi-person-circle me-1"></i>
-                            <strong>{{ auth()->user()->username }}</strong>
-                            <span class="badge bg-secondary ms-1">{{ auth()->user()->role }}</span>
-                        </span>
-                    </li>
-                    <li class="nav-item">
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" class="btn btn-sm btn-outline-light ms-2">
-                                <i class="bi bi-box-arrow-right"></i> Log out
-                            </button>
-                        </form>
-                    </li>
-                @endguest
-            </ul>
+        {{-- Auth — desktop only (mobile uses sidebar) --}}
+        <div class="be-nav-right d-none d-lg-flex">
+            @guest
+                <a class="btn btn-sm btn-outline-light" href="{{ route('login') }}">
+                    <i class="bi bi-box-arrow-in-right me-1"></i>Log in
+                </a>
+                <a class="btn btn-sm btn-outline-light" href="{{ route('register') }}">
+                    <i class="bi bi-person-plus me-1"></i>Register
+                </a>
+            @else
+                <span class="navbar-text">
+                    <i class="bi bi-person-circle me-1"></i>
+                    <strong>{{ auth()->user()->username }}</strong>
+                    <span class="badge bg-secondary ms-1">{{ auth()->user()->role }}</span>
+                </span>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-sm btn-outline-light">
+                        <i class="bi bi-box-arrow-right me-1"></i>Log out
+                    </button>
+                </form>
+            @endguest
         </div>
+
     </div>
 </nav>
 
@@ -114,7 +89,7 @@
             <p class="sidebar-heading text-uppercase mt-1">
                 <i class="bi bi-compass"></i> Browse
             </p>
-            <a class="sidebar-link {{ request()->routeIs('catalog.index') ? 'active' : '' }}"
+            <a class="sidebar-link {{ request()->routeIs('catalog.index') && !request('category') ? 'active' : '' }}"
                href="{{ route('catalog.index') }}">
                 <i class="bi bi-grid-3x3-gap"></i> All Books
             </a>
@@ -160,6 +135,36 @@
                 @endif
             @endauth
 
+            {{-- Auth footer — mobile only (desktop uses navbar) --}}
+            <div class="d-lg-none">
+                @auth
+                    <div class="be-sidebar-user">
+                        <i class="bi bi-person-circle be-sidebar-user-icon"></i>
+                        <div class="be-sidebar-user-info">
+                            <div class="be-sidebar-username">{{ auth()->user()->username }}</div>
+                            <div class="be-sidebar-role">{{ auth()->user()->role }}</div>
+                        </div>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="be-sidebar-logout" title="Log out">
+                                <i class="bi bi-box-arrow-right"></i>
+                            </button>
+                        </form>
+                    </div>
+                @else
+                    <div class="be-sidebar-guest">
+                        <a class="sidebar-link {{ request()->routeIs('login') ? 'active' : '' }}"
+                           href="{{ route('login') }}">
+                            <i class="bi bi-box-arrow-in-right"></i> Log in
+                        </a>
+                        <a class="sidebar-link {{ request()->routeIs('register') ? 'active' : '' }}"
+                           href="{{ route('register') }}">
+                            <i class="bi bi-person-plus"></i> Register
+                        </a>
+                    </div>
+                @endauth
+            </div>
+
         </div>
     </aside>
 
@@ -198,22 +203,6 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-(function () {
-    const sidebar = document.getElementById('sidebar');
-    const toggle  = document.getElementById('sidebarToggle');
-    const LG      = 992;
-
-    if (localStorage.getItem('sidebarCollapsed') === 'true') {
-        sidebar.classList.add('be-collapsed');
-    }
-
-    toggle.addEventListener('click', function () {
-        sidebar.classList.toggle('be-collapsed');
-        localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('be-collapsed'));
-    });
-})();
-</script>
 @stack('scripts')
 </body>
 </html>
